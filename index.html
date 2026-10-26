@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Valtore Games · Zona de Quarentena</title>
+<meta name="description" content="Valtore Games: jogos indie em pixel art. Zona de Quarentena, jogo de sobrevivência onde você decide quem entra e vive com quem entrou. Grátis, no navegador e no Android.">
+<meta name="theme-color" content="#0e0b09">
+<meta property="og:title" content="Zona de Quarentena · Valtore Games">
+<meta property="og:description" content="10 dias. 20 vidas. 1 cura. Você decide quem entra na Zona 7.">
+<meta property="og:image" content="https://luudalmeid-ops.github.io/valtore-games/assets/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@400;500;700&family=VT323&display=swap">
+<style>
+:root {
+  --bg: #0e0b09; --bg2: #16110e; --panel: #1d1713; --line: #3a2e25; --fg: #efe9d8; --muted: #a39a86;
+  --amber: #e3a83b; --red: #d63a2a; --green: #83b35c; --blue: #6fb3d9;
+  --f-title: "Anton", Impact, sans-serif; --f-body: "Chakra Petch", system-ui, sans-serif; --f-pix: "VT323", monospace;
+}
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 17px; line-height: 1.55; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 90; background: repeating-linear-gradient(transparent 0 3px, rgba(255,255,255,.014) 3px 4px); }
+img, video { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.tape { height: 12px; background: repeating-linear-gradient(-45deg, var(--amber) 0 18px, #1a1410 18px 36px); }
+.eyebrow { font-size: 13px; letter-spacing: .32em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+h2.sec { font-family: var(--f-title); font-weight: 400; font-size: clamp(40px, 6vw, 68px); line-height: .98; text-transform: uppercase; margin: 10px 0 14px; }
+.lead { color: var(--muted); max-width: 640px; font-size: 18px; }
+section { padding: 92px 0; position: relative; }
+
+/* ---------- topo ---------- */
+header.top { position: sticky; top: 0; z-index: 50; background: rgba(14,11,9,.82); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 18px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-family: var(--f-body); font-weight: 700; letter-spacing: .34em; font-size: 15px; }
+.brand canvas { width: 26px; height: 26px; image-rendering: pixelated; }
+.brand small { color: var(--amber); letter-spacing: .3em; }
+nav.links { margin-left: auto; display: flex; gap: 26px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+nav.links a { text-decoration: none; color: var(--muted); transition: color .2s; }
+nav.links a:hover { color: var(--fg); }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang button { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .1em; background: none; border: 0; color: var(--muted); padding: 6px 11px; cursor: pointer; }
+.lang button.on { background: var(--amber); color: #1c1405; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 15px; text-decoration: none; padding: 15px 26px; border-radius: 8px; border: 0; cursor: pointer; transition: transform .15s, filter .2s; box-shadow: inset 0 -4px 0 rgba(0,0,0,.28); }
+.btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.btn:active { transform: translateY(1px); }
+.btn.amber { background: var(--amber); color: #1c1405; }
+.btn.red { background: var(--red); color: #fff; }
+.btn.green { background: var(--green); color: #0d1a0f; }
+.btn.ghost { background: var(--panel); color: var(--fg); box-shadow: inset 0 0 0 2px var(--line); }
+.btn.sm { padding: 9px 16px; font-size: 13px; border-radius: 6px; }
+.btn.pulse { animation: pulse 2.4s infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: inset 0 -4px 0 rgba(0,0,0,.28), 0 0 0 0 rgba(227,168,59,.55); } 50% { box-shadow: inset 0 -4px 0 rgba(0,0,0,.28), 0 0 0 12px rgba(227,168,59,0); } }
+
+/* ---------- hero ---------- */
+.hero { padding: 0; min-height: calc(100vh - 76px); display: flex; align-items: center; overflow: hidden; isolation: isolate; }
+.hero .bg { position: absolute; inset: 0; z-index: -3; background: url(assets/hero.jpg) 72% 40% / cover no-repeat; image-rendering: pixelated; filter: saturate(1) brightness(.8); }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, var(--bg) 8%, rgba(14,11,9,.78) 46%, rgba(14,11,9,.25) 100%), linear-gradient(0deg, var(--bg) 0%, transparent 28%); }
+.hero::after { content: ""; position: absolute; width: 900px; height: 900px; right: -200px; top: -120px; z-index: -2; border-radius: 50%; background: radial-gradient(circle, rgba(214,58,42,.3), transparent 62%); }
+#rain { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+.hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; padding: 60px 0 80px; }
+.tag { display: inline-block; font-family: var(--f-pix); font-size: 24px; background: var(--amber); color: #120f0d; padding: 0 12px; margin-bottom: 18px; }
+h1 { font-family: var(--f-title); font-weight: 400; text-transform: uppercase; line-height: .9; font-size: clamp(64px, 11vw, 150px); letter-spacing: .005em; position: relative; }
+h1 span { display: block; }
+h1 .r { color: var(--red); }
+h1.glitch::before, h1.glitch::after { content: attr(data-t); position: absolute; left: 0; top: 0; width: 100%; opacity: 0; pointer-events: none; }
+h1.glitch::before { color: #36e0ff; clip-path: inset(0 0 55% 0); animation: gl1 6s infinite; }
+h1.glitch::after { color: var(--red); clip-path: inset(48% 0 0 0); animation: gl2 6s infinite; }
+@keyframes gl1 { 0%, 93%, 100% { opacity: 0; transform: none; } 94% { opacity: .8; transform: translateX(-8px); } 96% { opacity: .8; transform: translateX(6px); } 98% { opacity: 0; } }
+@keyframes gl2 { 0%, 93%, 100% { opacity: 0; transform: none; } 95% { opacity: .8; transform: translateX(8px); } 97% { opacity: .8; transform: translateX(-5px); } 99% { opacity: 0; } }
+.sub { font-family: var(--f-pix); font-size: clamp(28px, 3.4vw, 40px); color: #d8d2c0; margin: 22px 0 8px; line-height: 1.05; }
+.sub b { color: var(--red); font-weight: 400; }
+.hero p.d { color: var(--muted); max-width: 520px; margin-bottom: 30px; font-size: 18px; }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; }
+.note { margin-top: 18px; font-size: 14px; color: var(--muted); }
+.note b { color: var(--green); }
+.phones { position: relative; height: 640px; }
+.phone { position: absolute; width: 290px; padding: 10px; border-radius: 40px; background: #0b0b0b; box-shadow: 0 0 0 3px #343434, 0 30px 80px rgba(0,0,0,.7), 0 0 90px rgba(214,58,42,.35); }
+.phone img, .phone video { border-radius: 30px; width: 100%; aspect-ratio: 390 / 844; object-fit: cover; background: #111; }
+.phone::before { content: ""; position: absolute; top: 17px; left: 50%; width: 86px; height: 20px; margin-left: -43px; background: #000; border-radius: 12px; z-index: 2; }
+.phones .p1 { right: 20px; top: 0; transform: rotate(5deg); animation: fl 7s ease-in-out infinite; z-index: 2; }
+.phones .p2 { left: 0; top: 70px; transform: rotate(-7deg) scale(.9); animation: fl 8s ease-in-out -3s infinite; filter: brightness(.7); }
+@keyframes fl { 50% { translate: 0 -14px; } }
+
+.apoiobar { display: block; text-decoration: none; background: linear-gradient(90deg, rgba(227,168,59,.2), rgba(214,58,42,.18)); border-bottom: 1px solid var(--amber); padding: 14px 0; transition: background .2s; }
+.apoiobar:hover { background: linear-gradient(90deg, rgba(227,168,59,.32), rgba(214,58,42,.28)); }
+.apoiobar { display: flex; justify-content: center; align-items: center; gap: 22px; padding-inline: 20px; flex-wrap: wrap; text-align: center; }
+.apoiobar .ab-l > b { color: var(--red); font-size: 20px; margin-right: 6px; } .apoiobar .ab-l span b { color: var(--amber); }
+.strip { background: var(--bg2); border-block: 1px solid var(--line); padding: 26px 0; }
+.strip .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px 30px; }
+.stat { display: flex; align-items: baseline; gap: 10px; }
+.stat b { font-family: var(--f-title); font-weight: 400; font-size: 44px; color: var(--amber); line-height: 1; }
+.stat span { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- como funciona ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; }
+.step { background: var(--panel); border: 1px solid var(--line); border-top: 6px solid var(--red); padding: 28px 26px 30px; position: relative; overflow: hidden; }
+.step .n { font-family: var(--f-title); font-size: 110px; line-height: .8; color: rgba(255,255,255,.05); position: absolute; right: 14px; top: 10px; }
+.step h3 { font-family: var(--f-title); font-weight: 400; font-size: 34px; text-transform: uppercase; margin-bottom: 8px; }
+.step p { color: var(--muted); }
+.step .when { font-family: var(--f-pix); font-size: 24px; color: var(--amber); }
+.feats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
+.feat { background: var(--bg2); border: 1px solid var(--line); padding: 20px 20px 22px; transition: transform .2s, border-color .2s; }
+.feat:hover { transform: translateY(-4px); border-color: var(--amber); }
+.feat h4 { font-size: 16px; letter-spacing: .06em; text-transform: uppercase; margin: 10px 0 6px; }
+.feat p { font-size: 15px; color: var(--muted); line-height: 1.45; }
+.feat svg { width: 34px; height: 34px; }
+
+/* ---------- galeria ---------- */
+.gal-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.arrows { display: flex; gap: 10px; }
+.arrows button { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--line); background: var(--panel); color: var(--fg); font-size: 22px; cursor: pointer; transition: .2s; }
+.arrows button:hover { border-color: var(--amber); color: var(--amber); }
+.rail { display: flex; gap: 26px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 40px max(20px, calc((100vw - 1120px) / 2)) 30px; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.shot { flex: none; width: 270px; scroll-snap-align: center; }
+.shot .phone { position: relative; width: 100%; transition: transform .25s; }
+.shot:hover .phone { transform: translateY(-8px) rotate(-1deg); }
+.shot h4 { margin: 20px 4px 4px; font-family: var(--f-title); font-weight: 400; font-size: 26px; text-transform: uppercase; letter-spacing: .02em; }
+.shot p { margin: 0 4px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+
+/* ---------- trailer ---------- */
+.trailer { background: radial-gradient(ellipse at 20% 50%, rgba(214,58,42,.2), transparent 55%), var(--bg2); border-block: 1px solid var(--line); }
+.trailer .wrap { display: grid; grid-template-columns: 340px 1fr; gap: 70px; align-items: center; }
+.trailer .phone { position: relative; width: 340px; }
+.trailer .phone video { aspect-ratio: 9 / 16; }
+.trailer ul { list-style: none; padding: 0; margin-top: 26px; display: grid; gap: 12px; }
+.trailer li { padding-left: 30px; position: relative; color: #d8d2c0; }
+.trailer li::before { content: ""; position: absolute; left: 0; top: 9px; width: 14px; height: 14px; background: var(--red); box-shadow: 4px 4px 0 var(--amber); }
+
+/* ---------- selos ---------- */
+.selos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 44px; }
+.selo { background: var(--panel); border: 2px solid var(--line); padding: 28px 22px; text-align: center; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.selo:hover { transform: translateY(-6px); border-color: var(--c); box-shadow: 0 0 40px -10px var(--c); }
+.selo svg { width: 76px; height: 76px; margin-bottom: 12px; filter: drop-shadow(0 0 14px var(--c)); }
+.selo h4 { font-family: var(--f-title); font-weight: 400; font-size: 30px; text-transform: uppercase; color: var(--c); }
+.selo p { color: var(--muted); font-size: 15px; margin-top: 6px; }
+
+/* ---------- apoio ---------- */
+.apoie { background: radial-gradient(ellipse at 50% 0%, rgba(227,168,59,.22), transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(214,58,42,.2), transparent 60%), var(--bg); }
+.apoie .box { border: 2px solid var(--amber); background: linear-gradient(180deg, rgba(227,168,59,.07), rgba(214,58,42,.06)); padding: 56px 48px 50px; position: relative; text-align: center; box-shadow: 0 0 120px -30px rgba(227,168,59,.45); }
+.apoie .box::before, .apoie .box::after { content: ""; position: absolute; left: -2px; right: -2px; height: 12px; background: repeating-linear-gradient(-45deg, var(--amber) 0 18px, #1a1410 18px 36px); }
+.apoie .box::before { top: -14px; } .apoie .box::after { bottom: -14px; }
+.apoie h2.sec { margin-inline: auto; }
+.apoie .lead { margin-inline: auto; }
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 44px 0 26px; }
+.tier { font: inherit; color: inherit; text-align: center; background: var(--panel); border: 2px solid var(--line); padding: 30px 20px 26px; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; position: relative; }
+.tier:hover, .tier:focus-visible { transform: translateY(-8px); border-color: var(--amber); box-shadow: 0 20px 50px -18px rgba(227,168,59,.6); outline: none; }
+.tier .v { font-family: var(--f-title); font-size: 72px; line-height: 1; color: var(--amber); }
+.tier .v small { font-size: 30px; margin-right: 6px; color: var(--fg); }
+.tier .nm { display: block; margin-top: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 15px; }
+.tier .ds { display: block; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+.tier.top { border-color: var(--red); }
+.tier.top::after { content: attr(data-flag); position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding: 2px 12px; }
+.apoie .free { color: var(--muted); font-size: 15px; max-width: 640px; margin: 0 auto; }
+.apoie .free b { color: var(--green); }
+
+/* ---------- sobre ---------- */
+.sobre .wrap { display: grid; grid-template-columns: 220px 1fr; gap: 50px; align-items: center; }
+.sobre img { width: 220px; height: 220px; image-rendering: pixelated; border: 6px solid #000; box-shadow: 0 0 0 4px var(--red), 0 24px 60px rgba(0,0,0,.6); }
+.sobre p { color: #d8d2c0; max-width: 640px; margin-bottom: 16px; }
+.social { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+
+.apkinfo { margin-top: 6px; font-size: 13px; color: var(--muted); } .apkinfo a { color: var(--amber); }
+.seg { padding-top: 40px; } .passos { margin: 26px 0 0; padding-left: 0; list-style: none; counter-reset: p; display: grid; gap: 14px; max-width: 760px; }
+.passos li { counter-increment: p; position: relative; padding: 16px 18px 16px 64px; background: var(--panel); border: 1px solid var(--line); color: #d8d2c0; }
+.passos li::before { content: counter(p); position: absolute; left: 18px; top: 12px; font-family: var(--f-title); font-size: 32px; color: var(--amber); line-height: 1.2; }
+.hash { margin-top: 22px; max-width: 760px; font-size: 14px; color: var(--muted); display: grid; gap: 8px; }
+.hash code { display: block; background: #0b0807; border: 1px solid var(--line); padding: 10px 12px; color: #b9d8b0; font-size: 13px; word-break: break-all; }
+.hash-n { color: var(--amber); }
+footer { border-top: 1px solid var(--line); background: #0a0806; padding: 36px 0 44px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px 30px; align-items: center; }
+footer .brand { font-size: 13px; }
+
+/* ---------- modal Pix ---------- */
+dialog { border: 2px solid var(--amber); background: var(--bg2); color: var(--fg); padding: 0; width: min(440px, 100% - 28px); max-height: calc(100dvh - 28px); overflow: auto; box-shadow: 0 30px 120px rgba(0,0,0,.8); }
+dialog::backdrop { background: rgba(5,3,2,.78); backdrop-filter: blur(6px); }
+.dlg { padding: 28px 28px 26px; text-align: center; position: relative; }
+.dlg .x { position: absolute; right: 12px; top: 10px; background: none; border: 0; color: var(--muted); font-size: 28px; cursor: pointer; line-height: 1; }
+.dlg h3 { font-family: var(--f-title); font-weight: 400; font-size: 34px; text-transform: uppercase; margin: 6px 0 2px; }
+.dlg .amt { font-family: var(--f-title); font-size: 56px; color: var(--amber); line-height: 1; }
+.dlg #qr { margin: 18px auto 14px; width: 232px; background: #fff; padding: 8px; border-radius: 6px; }
+.dlg #qr svg { width: 100%; height: auto; display: block; }
+.dlg .code { width: 100%; height: 70px; resize: none; background: #0b0807; color: #b9d8b0; border: 1px solid var(--line); border-radius: 6px; font: 12px/1.3 ui-monospace, monospace; padding: 8px; word-break: break-all; }
+.dlg .how { color: var(--muted); font-size: 14px; margin: 12px 0 16px; }
+.dlg .ok { color: var(--green); font-weight: 700; min-height: 22px; margin-top: 10px; }
+.dlg .warn { background: rgba(214,58,42,.14); border: 1px solid var(--red); padding: 18px; border-radius: 6px; margin: 20px 0 6px; }
+
+/* ---------- reveal ---------- */
+.js .rv { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+.js .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } .js .rv { opacity: 1; transform: none; } }
+
+@media (max-width: 980px) {
+  nav.links { display: none; } header.top .wrap { gap: 10px; } .brand { letter-spacing: .24em; font-size: 13px; } .brand small { display: none; } header .lang { margin-left: auto; }
+  .hero .wrap { grid-template-columns: 1fr; padding: 44px 0 56px; } .phones { height: 520px; max-width: 420px; margin-inline: auto; width: 100%; } .phone { width: 240px; } .phones .p1 { right: 0; } .phones .p2 { left: 0; top: 60px; }
+  .steps, .selos { grid-template-columns: 1fr 1fr; } .feats { grid-template-columns: 1fr 1fr; }
+  .trailer .wrap { grid-template-columns: 1fr; gap: 40px; justify-items: center; text-align: left; } .trailer .phone { width: 300px; }
+  .sobre .wrap { grid-template-columns: 1fr; text-align: center; justify-items: center; } .social { justify-content: center; }
+  section { padding: 70px 0; }
+}
+@media (max-width: 620px) {
+  .steps, .selos, .feats, .tiers { grid-template-columns: 1fr; } .apoie .box { padding: 44px 20px 38px; } .strip .wrap { justify-content: center; gap: 14px 28px; }
+  .btn { width: 100%; } header .btn { width: auto; } .cta { width: 100%; } .tier .v { font-size: 60px; } .shot { width: 240px; } .rail { padding-inline: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="tape"></div>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#topo"><canvas id="logo" width="13" height="13"></canvas><span>VALTORE <small>GAMES</small></span></a>
+    <nav class="links">
+      <a href="#como" data-i="n_como">Como funciona</a><a href="#galeria" data-i="n_gal">Galeria</a><a href="#selos" data-i="n_selos">Selos</a><a href="#sobre" data-i="n_sobre">Sobre</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Idioma"><button data-l="pt" class="on">PT</button><button data-l="en">EN</button></div>
+    <a class="btn amber sm pulse" href="#apoie" data-i="n_apoie">♥ Apoiar</a>
+  </div>
+</header>
+
+<main id="topo">
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="bg"></div><canvas id="rain"></canvas>
+  <div class="wrap">
+    <div>
+      <span class="tag" data-i="tag">NOVO JOGO · GRÁTIS</span>
+      <h1 class="glitch" data-t="ZONA DE QUARENTENA"><span>Zona de</span><span class="r">Quarentena</span></h1>
+      <p class="sub" data-i="sub">10 dias. 20 vidas. 1 cura.<br><b>Quem passa pelo portão?</b></p>
+      <p class="d" data-i="hero_d">Você é o fiscal do Portão Leste. De dia, examina cada sobrevivente e decide quem entra. À noite, julga quem ficou. E vive com cada escolha.</p>
+      <div class="cta">
+        <a class="btn red" id="cta-play" href="#" data-i="cta_play">▶ Jogar no navegador</a>
+        <a class="btn green" id="cta-apk" href="#" download data-i="cta_apk">⬇ Baixar para Android</a>
+        <a class="btn ghost" href="#apoie" data-i="cta_apoie">♥ Apoiar o projeto</a>
+      </div>
+      <p class="note" data-i="note"><b>Grátis.</b> Em português e inglês. Funciona no celular e no PC, sem cadastro.</p>
+      <p class="apkinfo"><span id="apkVer"></span> · <a href="#seguranca" data-i="apk_seg">Como instalar e conferir o arquivo</a></p>
+    </div>
+    <div class="phones" aria-hidden="true">
+      <div class="phone p2"><img data-shot="encapuzado" alt=""></div>
+      <div class="phone p1"><img data-shot="portao" alt="" fetchpriority="high"></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip"><div class="wrap">
+  <div class="stat"><b>10</b><span data-i="s1">dias até a cura</span></div>
+  <div class="stat"><b>20</b><span data-i="s2">moradores</span></div>
+  <div class="stat"><b>5</b><span data-i="s3">exames</span></div>
+  <div class="stat"><b>4</b><span data-i="s4">selos de liderança</span></div>
+  <div class="stat"><b>PT·EN</b><span data-i="s5">dois idiomas</span></div>
+</div></div>
+
+<a class="apoiobar" href="#apoie">
+  <span class="ab-l"><b>♥</b> <span data-i="ab_t"><b>Zona de Quarentena é grátis.</b> Gostou? Apoie o projeto com R$ 1, R$ 2 ou R$ 5 via Pix.</span></span>
+  <span class="btn amber sm" data-i="ab_b">Quero apoiar</span>
+</a>
+
+<!-- ================= COMO FUNCIONA ================= -->
+<section id="como">
+  <div class="wrap">
+    <div class="rv"><span class="eyebrow" data-i="e_como">Como funciona</span>
+    <h2 class="sec" data-i="h_como">Decida. Depois, viva com isso.</h2>
+    <p class="lead" data-i="l_como">Zona de Quarentena é um jogo de triagem e de consequências. Cada pessoa que passa pelo portão vira um morador da base. Ou um problema.</p></div>
+    <div class="steps">
+      <div class="step rv"><span class="n">1</span><span class="when" data-i="w1">DE DIA</span><h3 data-i="t1">No portão</h3><p data-i="p1">Cada sobrevivente tenta te convencer. A conversa dá pistas, mas só o exame confirma. Termômetro, lanterna, braços, pulso e pescoço. Demorou? A agitação sobe e alguém vai gritar.</p></div>
+      <div class="step rv"><span class="n">2</span><span class="when" data-i="w2">À NOITE</span><h3 data-i="t2">No refeitório</h3><p data-i="p2">A base se reúne e acusa. Às vezes é infecção. Às vezes é só medo. Examinar, isolar, defender ou executar na frente de todos. As facções estão olhando.</p></div>
+      <div class="step rv"><span class="n">3</span><span class="when" data-i="w3">10 DIAS</span><h3 data-i="t3">Até a cura</h3><p data-i="p3">O laboratório só chega a 100% se cientistas e médicos continuarem vivos. Comida, muro, saúde e energia caem todo dia. Vários finais, conforme o que você fez.</p></div>
+    </div>
+    <div class="feats">
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#e3a83b" shape-rendering="crispEdges"><path d="M2 0h5v1h1v5h-1v1h-2v2h-1v-2h-2v-1h-1v-5h1z"/></svg><h4 data-i="f1t">Famílias no portão</h4><p data-i="f1p">Casais, pais com filhos, avós com netos. Dá para separar uma família? Dá. Tem preço.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#d63a2a" shape-rendering="crispEdges"><path d="M3 0h3v1h1v1h1v7h-7v-7h1v-1h1z"/></svg><h4 data-i="f2t">Os encapuzados</h4><p data-i="f2p">Não tiram o capuz e não aceitam exame. Só a conversa diz se entram.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#83b35c" shape-rendering="crispEdges"><path d="M0 4h1v-2h2v2h1v-3h2v3h1v-2h2v5h-9z"/></svg><h4 data-i="f3t">A base viva</h4><p data-i="f3p">20 moradores com nome e profissão. Cada um come, trabalha e pesa nas suas contas.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#6fb3d9" shape-rendering="crispEdges"><path d="M0 0h2v1h-1v7h7v-1h1v2h-9zM3 3h1v4h-1zM5 1h1v6h-1z"/></svg><h4 data-i="f4t">Facções e motim</h4><p data-i="f4p">Humanistas querem salvar todos. Pragmáticos, só os úteis. Perca uma e vem o motim.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#e3a83b" shape-rendering="crispEdges"><path d="M4 0h1v3h2v1h-2v1h2v1h-2v3h-1v-3h-2v-1h2v-1h-2v-1h2z"/></svg><h4 data-i="f5t">A resistência</h4><p data-i="f5p">Quem você expulsa ou recusa vai para o acampamento lá fora. E pode voltar.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#d63a2a" shape-rendering="crispEdges"><path d="M1 3h2v-2h1v2h2v1h-2v4h-1v-4h-2z"/></svg><h4 data-i="f6t">Um vírus que muda</h4><p data-i="f6p">A Febre Âmbar fica mais esperta a cada dia. As pistas que ajudavam no dia 1 mentem no dia 8.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#83b35c" shape-rendering="crispEdges"><path d="M1 0h7v1h-1v1h1v1h-1v1h1v1h-1v1h1v1h-7v-1h1v-1h-1v-1h1v-1h-1v-1h1v-1h-1v-1h1z"/></svg><h4 data-i="f7t">Mão de obra</h4><p data-i="f7p">Cada profissional precisa de ajudante. Você escolhe para onde vai cada sem profissão.</p></div>
+      <div class="feat rv"><svg viewBox="0 0 9 9" fill="#6fb3d9" shape-rendering="crispEdges"><path d="M0 1h9v1h-9zM0 4h9v1h-9zM0 7h9v1h-9z"/></svg><h4 data-i="f8t">Salvo a cada noite</h4><p data-i="f8p">O progresso fica no seu aparelho. Pode fechar e voltar no dia seguinte.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALERIA ================= -->
+<section id="galeria" style="padding-bottom:20px">
+  <div class="wrap gal-head rv">
+    <div><span class="eyebrow" data-i="e_gal">Galeria</span><h2 class="sec" data-i="h_gal" style="margin-bottom:0">Telas do jogo</h2></div>
+    <div class="arrows"><button id="prev" aria-label="Anterior">‹</button><button id="next" aria-label="Próximo">›</button></div>
+  </div>
+  <div class="rail" id="rail"></div>
+</section>
+
+<!-- ================= TRAILER ================= -->
+<section class="trailer" id="trailer">
+  <div class="wrap">
+    <div class="phone rv"><video id="vid" controls playsinline preload="none" poster="assets/poster.jpg"><source src="assets/trailer.mp4" type="video/mp4"></video></div>
+    <div class="rv">
+      <span class="eyebrow" data-i="e_tr">Trailer</span>
+      <h2 class="sec" data-i="h_tr">45 segundos no portão</h2>
+      <p class="lead" data-i="l_tr">Do primeiro exame ao último selo. Ligue o som: a trilha foi feita para o jogo.</p>
+      <ul>
+        <li data-i="tr1">Famílias, exames e uma decisão com uma arma na mão.</li>
+        <li data-i="tr2">O julgamento da noite, na frente de todos.</li>
+        <li data-i="tr3">A resistência, os encapuzados e os finais.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SELOS ================= -->
+<section id="selos">
+  <div class="wrap">
+    <div class="rv"><span class="eyebrow" data-i="e_selos">Selos de liderança</span>
+    <h2 class="sec" data-i="h_selos">Como você vai liderar?</h2>
+    <p class="lead" data-i="l_selos">Antes do primeiro dia, escolha um selo. No fim, o jogo mostra quem você foi de verdade. Dá para prometer uma coisa e fazer outra.</p></div>
+    <div class="selos" id="selosGrid"></div>
+  </div>
+</section>
+
+<!-- ================= APOIE ================= -->
+<section class="apoie" id="apoie">
+  <div class="wrap">
+    <div class="box rv">
+      <span class="eyebrow" data-i="e_ap">Apoie o projeto</span>
+      <h2 class="sec" data-i="h_ap">Ajude o Valtore Games a continuar</h2>
+      <p class="lead" data-i="l_ap">Zona de Quarentena é grátis e vai continuar sendo. Se você gostou e quiser dar uma força, qualquer valor ajuda: via Pix, em segundos.</p>
+      <div class="tiers">
+        <button class="tier" data-v="1"><span class="v"><small>R$</small>1</span><span class="nm" data-i="tn1">Uma ração</span><span class="ds" data-i="td1">Um agradecimento simbólico. Já significa muito.</span></button>
+        <button class="tier top" data-v="2" data-flag="Mais escolhido"><span class="v"><small>R$</small>2</span><span class="nm" data-i="tn2">Um turno de vigia</span><span class="ds" data-i="td2">Ajuda a manter o projeto de pé.</span></button>
+        <button class="tier" data-v="5"><span class="v"><small>R$</small>5</span><span class="nm" data-i="tn3">Reforço no muro</span><span class="ds" data-i="td3">Incentiva novas atualizações do jogo.</span></button>
+      </div>
+      <p class="free" data-i="free"><b>Você não precisa doar para jogar.</b> Se não puder, ajuda muito compartilhar o jogo com um amigo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOBRE ================= -->
+<section class="sobre" id="sobre">
+  <div class="wrap">
+    <img src="assets/icone.png" alt="Valtore Games">
+    <div class="rv">
+      <span class="eyebrow" data-i="e_sob">Sobre</span>
+      <h2 class="sec" data-i="h_sob">Valtore Games</h2>
+      <p data-i="sob1">Estúdio independente de jogos em pixel art. Zona de Quarentena é o projeto atual: um jogo de sobrevivência sobre escolhas difíceis, feito para o celular e o navegador.</p>
+      <p data-i="sob2">Desenvolvido por <b>@ludianderson_almeida</b>. Novas atualizações saem aos poucos, com base no que os jogadores dizem. Sua opinião muda o jogo.</p>
+      <div class="social">
+        <a class="btn ghost sm" id="lnk-ig" href="#" target="_blank" rel="noopener">Instagram</a>
+        <a class="btn amber sm" href="#apoie" data-i="n_apoie2">♥ Apoiar</a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="seg" id="seguranca">
+  <div class="wrap">
+    <div class="rv"><span class="eyebrow" data-i="e_seg">Android</span>
+    <h2 class="sec" data-i="h_seg">Como instalar o APK</h2></div>
+    <ol class="passos rv">
+      <li data-i="i1">Toque em <b>Baixar para Android</b> no celular.</li>
+      <li data-i="i2">Abra o arquivo baixado. Se o Android avisar sobre "apps desconhecidos", permita a instalação para o seu navegador. Esse aviso aparece para qualquer app instalado fora da Play Store.</li>
+      <li data-i="i3">Toque em <b>Instalar</b> e depois em <b>Abrir</b>. As próximas versões instalam por cima, sem perder o progresso.</li>
+    </ol>
+    <div class="hash rv"><span data-i="sha_t">Para conferir que o arquivo não foi alterado, o código SHA-256 dele é:</span><code id="apkSha"></code><span class="hash-n" data-i="sha_n">Baixe o APK só por esta página. Links de outros lugares podem trazer um arquivo modificado.</span></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#topo"><span>VALTORE <small>GAMES</small></span></a>
+    <span data-i="rights">© 2026 Valtore Games · Todos os direitos reservados</span>
+    <span data-i="warn">Contém violência e sangue em pixel art. Recomendado para maiores de 16 anos.</span>
+  </div>
+</footer>
+
+<dialog id="pix">
+  <div class="dlg">
+    <button class="x" id="pixX" aria-label="Fechar">×</button>
+    <span class="eyebrow" data-i="px_e">Apoio via Pix</span>
+    <h3 data-i="px_t">Obrigado!</h3>
+    <div class="amt" id="pixAmt">R$ 2</div>
+    <div id="pixBody"></div>
+  </div>
+</dialog>
+
+<script src="vendor/qrcode.js"></script>
+<script>
+// ======================= CONFIGURAÇÃO =======================
+const CFG = {
+  PLAY_URL: "jogo/",
+  APK_URL:  "downloads/ZonaDeQuarentena-2.5.3.apk",
+  APK_VER:  "2.5.3",
+  APK_KB:   80,
+  APK_SHA256: "6abe3299338d2bebbaa0bc05cc9301f1edbebeff7f47f58d46c1bcca28cea5bb",
+  INSTAGRAM: "https://instagram.com/ludianderson_almeida",
+  PIX_KEY: "",              // chave Pix (preferir "chave aleatória")
+  PIX_NAME: "VALTORE GAMES", // até 25 caracteres, sem acento
+  PIX_CITY: "BRASIL",        // até 15 caracteres, sem acento
+};
+// ============================================================
+document.documentElement.classList.add("js");
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+// ---------- textos em inglês (o português está no HTML) ----------
+const EN = {
+  n_como: "How it works", n_gal: "Gallery", n_selos: "Seals", n_sobre: "About", n_apoie: "♥ Support", n_apoie2: "♥ Support",
+  tag: "NEW GAME · FREE", sub: "10 days. 20 lives. 1 cure.<br><b>Who gets through the gate?</b>",
+  hero_d: "You're the inspector at the East Gate. By day, you examine every survivor and decide who comes in. At night, you judge who stayed. And you live with every choice.",
+  cta_play: "▶ Play in the browser", cta_apk: "⬇ Download for Android", cta_apoie: "♥ Support the project",
+  note: "<b>Free.</b> In Portuguese and English. Works on phone and PC, no sign-up.",
+  s1: "days to the cure", s2: "residents", s3: "exams", s4: "leadership seals", s5: "two languages",
+  ab_t: "<b>Quarantine Zone is free.</b> Liked it? Support the project with R$ 1, R$ 2 or R$ 5 via Pix.", ab_b: "I want to support",
+  e_como: "How it works", h_como: "Decide. Then live with it.", l_como: "Quarantine Zone is a game of triage and consequences. Everyone who walks through the gate becomes a resident of the base. Or a problem.",
+  w1: "BY DAY", t1: "At the gate", p1: "Every survivor tries to talk their way in. Conversation gives hints, but only the exam confirms. Thermometer, flashlight, arms, pulse and neck. Taking too long? Agitation rises and someone will scream.",
+  w2: "AT NIGHT", t2: "In the mess hall", p2: "The base gathers and accuses. Sometimes it's infection. Sometimes it's only fear. Examine, isolate, defend or execute, in front of everyone. The factions are watching.",
+  w3: "10 DAYS", t3: "To the cure", p3: "The lab only reaches 100% if scientists and doctors stay alive. Food, wall, health and power drop every day. Several endings, depending on what you did.",
+  f1t: "Families at the gate", f1p: "Couples, parents with kids, grandparents with grandkids. Can you split a family up? You can. It has a price.",
+  f2t: "The hooded ones", f2p: "They won't remove the hood or take an exam. Only the conversation says if they come in.",
+  f3t: "A living base", f3p: "20 residents with names and jobs. Each one eats, works and weighs on your numbers.",
+  f4t: "Factions and mutiny", f4p: "Humanists want to save everyone. Pragmatists, only the useful. Lose one and the mutiny comes.",
+  f5t: "The resistance", f5p: "Those you expel or turn away go to the camp outside. And they can come back.",
+  f6t: "A changing virus", f6p: "Amber Fever gets smarter every day. The hints that helped on day 1 lie on day 8.",
+  f7t: "Heavy labor", f7p: "Each skilled worker needs a helper. You choose where every unskilled adult goes.",
+  f8t: "Saved every night", f8p: "Progress stays on your device. Close it and come back the next day.",
+  e_gal: "Gallery", h_gal: "Game screens",
+  e_tr: "Trailer", h_tr: "45 seconds at the gate", l_tr: "From the first exam to the last seal. Turn the sound on: the soundtrack was made for the game.",
+  tr1: "Families, exams and a decision with a gun in your hand.", tr2: "The night trial, in front of everyone.", tr3: "The resistance, the hooded ones and the endings.",
+  e_selos: "Leadership seals", h_selos: "How will you lead?", l_selos: "Before day 1, pick a seal. At the end, the game shows who you really were. You can promise one thing and do another.",
+  e_ap: "Support the project", h_ap: "Help Valtore Games keep going",
+  l_ap: "Quarantine Zone is free and will stay free. If you liked it and want to chip in, any amount helps: via Pix, in seconds.",
+  tn1: "A ration", td1: "A symbolic thank-you. It already means a lot.", tn2: "A guard shift", td2: "Helps keep the project standing.", tn3: "Wall reinforcement", td3: "Encourages new updates to the game.",
+  free: "<b>You don't have to donate to play.</b> If you can't, sharing the game with a friend helps a lot.",
+  e_sob: "About", h_sob: "Valtore Games",
+  sob1: "Independent pixel-art game studio. Quarantine Zone is the current project: a survival game about hard choices, made for phones and the browser.",
+  sob2: "Developed by <b>@ludianderson_almeida</b>. Updates come out little by little, based on what players say. Your feedback changes the game.",
+  apk_seg: "How to install and check the file",
+  e_seg: "Android", h_seg: "How to install the APK",
+  i1: "Tap <b>Download for Android</b> on your phone.",
+  i2: "Open the downloaded file. If Android warns about \"unknown apps\", allow installs from your browser. This warning shows up for any app installed outside the Play Store.",
+  i3: "Tap <b>Install</b>, then <b>Open</b>. Future versions install on top, keeping your progress.",
+  sha_t: "To check the file wasn't altered, its SHA-256 code is:", sha_n: "Only download the APK from this page. Links from elsewhere may carry a modified file.",
+  rights: "© 2026 Valtore Games · All rights reserved", warn: "Contains violence and blood in pixel art. Recommended for ages 16+.",
+  px_e: "Support via Pix", px_t: "Thank you!",
+};
+const GAL = [
+  ["selos", "Como você vai liderar?", "How will you lead?", "Escolha um selo no começo. No fim, o jogo mostra quem você foi.", "Pick a seal at the start. At the end, the game shows who you were."],
+  ["portao", "O portão", "The gate", "Famílias chegam juntas. Cada uma passa pela triagem sozinha.", "Families arrive together. Each one is screened alone."],
+  ["exame", "O exame", "The exam", "Só o exame confirma. A lanterna mostra o olho amarelo.", "Only the exam confirms. The flashlight shows the yellow eye."],
+  ["tiro", "A decisão", "The decision", "Acertou? Mais um dia. Errou? Foi um inocente.", "Got it right? One more day. Got it wrong? It was an innocent."],
+  ["maodeobra", "Mão de obra", "Labor", "Quem trabalha onde? Cada profissional precisa de ajudante.", "Who works where? Every skilled worker needs a helper."],
+  ["encapuzado", "O encapuzado", "The hooded one", "Sem exame, só conversa. E uma oferta tentadora.", "No exam, only conversation. And a tempting offer."],
+  ["noite", "O julgamento", "The night trial", "À noite, a base acusa. Examinar, isolar, defender ou executar.", "At night, the base accuses. Examine, isolate, defend or execute."],
+  ["final", "Quem você foi", "Who you were", "O jogo compara o que você prometeu com o que fez.", "The game compares what you promised with what you did."],
+];
+const SELOS = [
+  ["#5fae6b", "Coração aberto", "Open Heart", "Ninguém fica pra trás. Salvo quem eu puder, com ou sem profissão.", "No one gets left behind. I'll save whoever I can, skills or not.", [".XX...XX.", "XXXX.XXXX", "XXXXXXXXX", "XXXXXXXXX", ".XXXXXXX.", "..XXXXX..", "...XXX...", "....X...."]],
+  ["#6fb3d9", "Cabeça fria", "Cool Head", "A base vem primeiro. Entra quem trabalha, sai quem só pesa.", "The base comes first. Those who work get in; dead weight goes.", ["....X....", ".X..X..X.", "..X.X.X..", "...XXX...", "XXXXXXXXX", "...XXX...", "..X.X.X..", ".X..X..X.", "....X...."]],
+  ["#e3a83b", "Olho clínico", "Sharp Eye", "Só o exame decide. Sem pressa, sem erro.", "Only the exam decides. No rush, no mistakes.", ["..XXXXX..", ".X.....X.", "X..XXX..X", "X..X.X..X", "X..XXX..X", ".X.....X.", "..XXXXX.."]],
+  ["#d9534a", "Mão de ferro", "Iron Fist", "Na dúvida, eu atiro. A ordem acima de tudo.", "When in doubt, I shoot. Order above everything.", [".XXXXXX..", "X.X.X.XX.", "X.X.X.X.X", "XXXXXXX.X", "X.......X", "X......X.", ".X....X..", "..XXXX..."]],
+];
+const svgPix = (px, c) => `<svg viewBox="-1 -1 ${px[0].length + 2} ${px.length + 2}" fill="${c}" shape-rendering="crispEdges" aria-hidden="true">${px.map((r, y) => [...r].map((v, x) => v === "X" ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : "").join("")).join("")}</svg>`;
+
+let L = "pt";
+try { const q = new URLSearchParams(location.search).get("lang"), s = localStorage.getItem("vg-lang"); L = q || s || (/^pt/i.test(navigator.language || "") ? "pt" : "en"); } catch (e) {}
+if (L !== "en") L = "pt";
+$$("[data-i]").forEach(el => el.dataset.pt = el.innerHTML);
+
+function aplicarIdioma() {
+  document.documentElement.lang = L === "en" ? "en" : "pt-BR";
+  $$("[data-i]").forEach(el => { el.innerHTML = L === "en" && EN[el.dataset.i] !== undefined ? EN[el.dataset.i] : el.dataset.pt; });
+  $$(".lang button").forEach(b => b.classList.toggle("on", b.dataset.l === L));
+  $$("[data-shot]").forEach(i => i.src = `assets/${L}/${i.dataset.shot}.jpg`);
+  $("#rail").innerHTML = GAL.map(g => `<article class="shot"><div class="phone"><img loading="lazy" src="assets/${L}/${g[0]}.jpg" alt="${L === "en" ? g[2] : g[1]}"></div><h4>${L === "en" ? g[2] : g[1]}</h4><p>${L === "en" ? g[4] : g[3]}</p></article>`).join("");
+  $("#selosGrid").innerHTML = SELOS.map(s => `<div class="selo rv in" style="--c:${s[0]}">${svgPix(s[5], s[0])}<h4>${L === "en" ? s[2] : s[1]}</h4><p>${L === "en" ? s[4] : s[3]}</p></div>`).join("");
+  $$(".tier.top").forEach(t => t.dataset.flag = L === "en" ? "Most chosen" : "Mais escolhido");
+  try { localStorage.setItem("vg-lang", L); } catch (e) {}
+}
+$$(".lang button").forEach(b => b.onclick = () => { L = b.dataset.l; aplicarIdioma(); });
+aplicarIdioma();
+
+// ---------- links ----------
+$("#cta-play").href = CFG.PLAY_URL; $("#cta-apk").href = CFG.APK_URL; $("#lnk-ig").href = CFG.INSTAGRAM;
+$("#apkVer").textContent = `Android · v${CFG.APK_VER} · ${CFG.APK_KB} KB`; $("#apkSha").textContent = CFG.APK_SHA256;
+
+// ---------- logo em pixel ----------
+(() => {
+  const V = ["XX.........XX", "XX.........XX", ".XX.......XX.", ".XX.......XX.", "..XX.....XX..", "..XX.....XX..", "...XX...XX...", "...XX...XX...", "....XX.XX....", "....XXXXX....", ".....XXX.....", "......X......"];
+  const k = $("#logo").getContext("2d");
+  V.forEach((row, y) => [...row].forEach((c, x) => { if (c === "X") { k.fillStyle = y >= 9 ? "#e3a83b" : "#f2efe6"; k.fillRect(x, y, 1, 1); } }));
+})();
+
+// ---------- chuva em pixel ----------
+(() => {
+  const c = $("#rain"), g = c.getContext("2d"); if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let w, h, gotas = [];
+  const fit = () => { w = c.width = c.clientWidth; h = c.height = c.clientHeight; gotas = Array.from({ length: Math.round(w / 9) }, () => ({ x: Math.random() * w, y: Math.random() * h, v: 10 + Math.random() * 14, l: 6 + Math.random() * 12 })); };
+  fit(); addEventListener("resize", fit);
+  (function f() { g.clearRect(0, 0, w, h); g.fillStyle = "rgba(150,170,210,.32)"; for (const d of gotas) { d.y += d.v; d.x -= 1.5; if (d.y > h) { d.y = -20; d.x = Math.random() * w + 40; } g.fillRect(d.x | 0, d.y | 0, 2, d.l); } requestAnimationFrame(f); })();
+})();
+
+// ---------- galeria ----------
+const passo = () => ($(".shot") ? $(".shot").offsetWidth + 26 : 300) * (innerWidth < 700 ? 1 : 2);
+$("#prev").onclick = () => $("#rail").scrollBy({ left: -passo(), behavior: "smooth" });
+$("#next").onclick = () => $("#rail").scrollBy({ left: passo(), behavior: "smooth" });
+
+// ---------- aparecer ao rolar ----------
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
+  $$(".rv").forEach(el => io.observe(el));
+} else $$(".rv").forEach(el => el.classList.add("in"));
+
+// ======================= PIX =======================
+const PixBR = (() => {
+  const tlv = (id, v) => id + String(v.length).padStart(2, "0") + v;
+  const limpa = (s, n) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 .\-]/g, "").toUpperCase().slice(0, n).trim() || "X";
+  function crc16(s) { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let b = 0; b < 8; b++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; } return c.toString(16).toUpperCase().padStart(4, "0"); }
+  function payload(chave, valor, nome, cidade) {
+    const p = tlv("00", "01") + tlv("01", "11") + tlv("26", tlv("00", "br.gov.bcb.pix") + tlv("01", chave)) + tlv("52", "0000") + tlv("53", "986")
+      + tlv("54", valor.toFixed(2)) + tlv("58", "BR") + tlv("59", limpa(nome, 25)) + tlv("60", limpa(cidade, 15)) + tlv("62", tlv("05", "***")) + "6304";
+    return p + crc16(p);
+  }
+  return { payload, crc16 };
+})();
+window.PixBR = PixBR;
+
+const dlg = $("#pix");
+function abrirPix(v) {
+  $("#pixAmt").textContent = "R$ " + v;
+  const body = $("#pixBody");
+  if (!CFG.PIX_KEY) {
+    body.innerHTML = `<div class="warn">${L === "en" ? "Pix donations are being set up. Come back soon!" : "O apoio via Pix está sendo configurado. Volte em breve!"}</div>`;
+  } else {
+    const code = PixBR.payload(CFG.PIX_KEY, v, CFG.PIX_NAME, CFG.PIX_CITY);
+    const qr = qrcode(0, "M"); qr.addData(code); qr.make();
+    body.innerHTML = `<div id="qr">${qr.createSvgTag({ cellSize: 6, margin: 0, scalable: true })}</div>
+      <textarea class="code" readonly id="pixCode">${code}</textarea>
+      <button class="btn amber" id="pixCopy" style="width:100%;margin-top:10px">${L === "en" ? "Copy Pix code" : "Copiar Pix copia e cola"}</button>
+      <p class="ok" id="pixOk"></p>
+      <p class="how">${L === "en" ? "Open your bank app → Pix → Read QR code, or paste the code (Pix Copia e Cola)." : "Abra o app do seu banco → Pix → Ler QR code, ou cole o código em Pix Copia e Cola."}</p>`;
+    $("#pixCopy").onclick = async () => {
+      const t = $("#pixCode"); let ok = false;
+      try { await navigator.clipboard.writeText(code); ok = true; } catch (e) { t.select(); try { ok = document.execCommand("copy"); } catch (e2) {} }
+      $("#pixOk").textContent = ok ? (L === "en" ? "Code copied. Thank you! ♥" : "Código copiado. Obrigado! ♥") : (L === "en" ? "Select and copy the code above." : "Selecione e copie o código acima.");
+    };
+  }
+  dlg.showModal();
+}
+$$(".tier").forEach(t => t.onclick = () => abrirPix(+t.dataset.v));
+$("#pixX").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>
